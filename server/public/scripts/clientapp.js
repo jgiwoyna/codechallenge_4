@@ -3,6 +3,9 @@ $(document).ready(function () {
   // get treats on load
   getTreats();
 
+  $('button').on('click', '.delete u-full-width', deleteTreat);
+  $('button').on('click', '.edit u-full-width', editTreat);
+
   /**---------- Event Handling ----------**/
   $('#searchButton').on('click', function (event) {
     event.preventDefault();
@@ -78,6 +81,48 @@ $(document).ready(function () {
   }
 
   /** ---------- DOM Functions ----------**/
+  function deleteTreat() {
+
+  var id = $(this).parent().data('id');
+  console.log(id);
+
+  $.ajax({
+    type: 'DELETE',
+    url: '/treats/' + id,
+    success: function(result) {
+      getTreats();
+    },
+    error: function(result) {
+      console.log('could not delete treat.');
+    }
+  });
+}
+
+function editTreat() {
+  var id = $(this).parent().data('id');
+  console.log(id);
+
+  var treat = {};
+  var fields = $(this).parent().children().serializeArray();
+  fields.forEach(function(field) {
+    treat[field.name] = field.value;
+  });
+  console.log(treat);
+
+  $.ajax({
+    type: 'PUT',
+    url: '/treats/' + id,
+    data: treats,
+    success: function(result) {
+      console.log('updated!');
+      getTreats();
+    },
+    error: function(result) {
+      console.log('could not edit treat!');
+    }
+  });
+
+}
 
   function clearDom() {
     var $treats = $('#treat-display');

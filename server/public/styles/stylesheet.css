@@ -43,9 +43,7 @@ img {
   color: white;
 }
 
-.toggle {
-  display: none;
-}
+
 
 #modal {
   display: none; /* start not displayed */
