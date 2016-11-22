@@ -39,7 +39,7 @@ router.post('/', function(req, res) {
     client.query(
       'INSERT INTO treats (name, description, pic)' +
       'VALUES ($1, $2, $3)',
-      [newTreat.name, newTreat.description, newTreat.pic],
+      [newTreat.name, newTreat.description, newTreat.url],
       function(err, result) {
         done();
 
@@ -52,6 +52,61 @@ router.post('/', function(req, res) {
       });
 
   });
+
+});
+
+router.delete('/:id', function(req, res) {
+  treatID = req.params.id;
+
+  console.log('treat id to delete: ', treatID);
+  pg.connect(connectionString, function(err, client, done) {
+    if(err) {
+      console.log('connection error: ', err);
+      res.sendStatus(500);
+    }
+
+    client.query(
+      'DELETE FROM treats WHERE id = $1',
+      [treatID],
+      function(err, result) {
+        done();
+
+        if(err) {
+          res.sendStatus(500);
+        } else {
+          res.sendStatus(200);
+        }
+      });
+    });
+
+});
+
+router.put('/:id', function(req, res) {
+  treatID = req.params.id;
+  treat = req.body;
+
+  console.log('treat to update ', treat);
+
+  pg.connect(connectionString, function(err, client, done) {
+    if(err) {
+      console.log('connection error: ', err);
+      res.sendStatus(500);
+    }
+
+    client.query(
+      'UPDATE treats SET name=$1, description=$2, pic=$3' +
+      ' WHERE id=$4',
+
+      [treat.name, treat.description, treat.pic, treatID],
+      function(err, result) {
+        if(err) {
+          console.log('update error: ', err);
+          res.sendStatus(500);
+        } else {
+          res.sendStatus(200);
+        }
+      });
+    });
 
 });
 
